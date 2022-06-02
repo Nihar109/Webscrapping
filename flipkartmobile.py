@@ -10,6 +10,15 @@ soup = bs(page.content,'html.parser')
 
 count=0
 data = []
+products=[]
+prices=[]
+ratings=[]
+drive = []
+processor = []
+battery= []
+display = []
+camera=[]
+warranty=[]
 
 for containers in soup.findAll('a', class_='_1fQZEK'):
     name = containers.find('div', attrs={'class': '_4rR01T'})
@@ -21,14 +30,39 @@ for containers in soup.findAll('a', class_='_1fQZEK'):
     for col in specification:
         col = col.find_all('li', attrs={'class': 'rgWa7D'})
         memory = col[0].text
-        display = col[1].text
-        camera = col[2].text
-        battery = col[3].text
-        process = col[4].text
-        warranty = col[5].text
+        disp = col[1].text
+        cam = col[2].text
+        batt = col[3].text
+        pross = col[4].text
+        warnt = col[5].text
 
-    data.append((name.text, memory, display, camera, battery, process, warranty, price.text, rating.text))
+    data.append((name.text, memory, disp, cam, batt, pross, warnt, price.text, rating.text))
+
+    products.append(name.text)  # Add product name to list
+
+    prices.append(price.text)  # Add price to list
+
+    drive.append(memory)  # Add drive specifications to list
+
+    display.append(disp)  # Add Display specifications to list
+
+    camera.append(cam)  # Add camera specifications to to list
+
+    battery.append(batt)  # Add battery specifications to to list
+
+    processor.append(pross)  # Add processor specifications to to list
+
+    warranty.append(warnt)  # Add warranty specifications to to list
+
+    ratings.append(rating.text) if type(rating) == bs4.element.Tag else ratings.append('NaN')  # Add Rating to list
+
     count = count + 1  # Increment row count
+
+mobile = {'Product Name':products,'All_Drive':drive,'Display':display,'Camera':camera,"Battery":battery,'Processor':processor,'Warranty':warranty,'Price':prices,'Rating':ratings,}
+mobile_data = pd.DataFrame(mobile)
+
+mobile_data.to_csv('mobile_data.csv')
+print("Mobile data csv file saved successfully.")
 
 #establishing the connection
 conn = psycopg2.connect( user='postgres',
